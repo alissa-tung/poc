@@ -1,0 +1,12 @@
+version = "Two"
+
+format_macro_matchers = true
+format_macro_bodies = true
+
+normalize_comments = true
+normalize_doc_attributes = true
+
+imports_granularity = "Module"
+group_imports = "StdExternalCrate"
+
+reorder_impl_items = true

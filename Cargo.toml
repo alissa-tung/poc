@@ -1,0 +1,2 @@
+[workspace]
+members = ["poc/poc-bin", "poc/poc-gen", "poc/poc-lib", "workspace-hack"]
