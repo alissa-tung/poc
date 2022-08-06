@@ -107,7 +107,7 @@ impl PocService for ServerContext {
 
 #[tokio::main]
 async fn main() {
-    let addr = env::var("SERVER_ADDR").unwrap();
+    let addr = env::var("RS_SERVER_ADDR").unwrap();
     let server = ServerContext {};
     tonic::transport::Server::builder()
         .add_service(PocServiceServer::new(server))
