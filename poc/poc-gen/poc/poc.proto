@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package poc;
+
+service PocService {
+  rpc PocEcho(OMsg) returns (OMsg);
+
+  rpc ServerStreaming(stream PocMsg) returns (PocMsg);
+  rpc ClientStreaming(PocMsg) returns (PocMsg);
+  rpc BidiStreaming(stream PocMsg) returns (stream PocMsg);
+}
+
+message OMsg {
+  message IMsg {
+    oneof union_msg {
+      double double_msg = 1;
+      bool bool_msg = 2;
+      string string_msg = 3;
+      bytes bytes_msg = 4;
+    }
+  }
+
+  repeated IMsg xs = 1;
+  map<string, string> ys = 2;
+}
+
+message PocMsg { string xs = 1; }

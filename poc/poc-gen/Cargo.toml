@@ -5,3 +5,9 @@ edition = "2021"
 
 [dependencies]
 workspace-hack = { version = "0.1", path = "../../workspace-hack" }
+
+tonic = "0.8.0"
+prost = "0.11.0"
+
+[build-dependencies]
+tonic-build = "0.8.0"
