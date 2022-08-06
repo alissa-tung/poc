@@ -13,4 +13,17 @@ publish = false
 # are managed by hakari.
 
 ### BEGIN HAKARI SECTION
+[dependencies]
+bytes = { version = "1", features = ["std"] }
+indexmap = { version = "1", default-features = false, features = ["std"] }
+prost = { version = "0.11", features = ["prost-derive", "std"] }
+tokio = { version = "1", features = ["bytes", "io-std", "io-util", "libc", "macros", "memchr", "mio", "net", "num_cpus", "once_cell", "rt", "rt-multi-thread", "socket2", "sync", "time", "tokio-macros"] }
+
+[build-dependencies]
+bytes = { version = "1", features = ["std"] }
+either = { version = "1", features = ["use_std"] }
+indexmap = { version = "1", default-features = false, features = ["std"] }
+prost = { version = "0.11", features = ["prost-derive", "std"] }
+syn = { version = "1", features = ["clone-impls", "derive", "extra-traits", "full", "parsing", "printing", "proc-macro", "quote", "visit", "visit-mut"] }
+
 ### END HAKARI SECTION

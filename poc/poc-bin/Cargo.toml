@@ -3,5 +3,20 @@ name = "poc-bin"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "server"
+path = "src/server.rs"
+
+[[bin]]
+name = "client"
+path = "src/client.rs"
+
 [dependencies]
 workspace-hack = { version = "0.1", path = "../../workspace-hack" }
+
+poc-gen = { path = "../poc-gen" }
+
+log = "0.4.17"
+tokio = { version = "1.20.1", features = ["rt-multi-thread"] }
+tokio-stream = "0.1.9"
+tonic = "0.8.0"

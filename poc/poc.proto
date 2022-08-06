@@ -5,8 +5,8 @@ package poc;
 service PocService {
   rpc PocEcho(OMsg) returns (OMsg);
 
-  rpc ServerStreaming(stream PocMsg) returns (PocMsg);
-  rpc ClientStreaming(PocMsg) returns (PocMsg);
+  rpc ServerStreaming(PocMsg) returns (stream PocMsg);
+  rpc ClientStreaming(stream PocMsg) returns (PocMsg);
   rpc BidiStreaming(stream PocMsg) returns (stream PocMsg);
 }
 
