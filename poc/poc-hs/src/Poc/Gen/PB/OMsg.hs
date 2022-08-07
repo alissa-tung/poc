@@ -5,5 +5,11 @@ import PB.Common
 data IMsg
   = DoubleMsg Double
   | BoolMsg Bool
-  | StringMsg (PBByteString PBByteStringReprString)
-  | BytesMsg (PBByteString PBByteStringReprBytes)
+  | StringMsg (PBByteString PBString)
+  | BytesMsg (PBByteString PBBytes)
+
+data RsIMsg
+
+instance RsFFI RsIMsg IMsg where
+  fromRs = undefined
+  toRs = undefined
