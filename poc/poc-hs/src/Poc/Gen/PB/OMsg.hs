@@ -13,3 +13,6 @@ data RsIMsg
 instance RsFFI RsIMsg IMsg where
   fromRs = undefined
   toRs = undefined
+
+instance RsDrop RsIMsg where
+  dropRs = undefined

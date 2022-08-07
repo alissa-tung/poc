@@ -10,12 +10,12 @@ import Poc.Gen.PB.OMsg qualified as OMsg
 data PocService = PocService
   { pocEcho ::
       OMsg ->
-      Either OMsg GRPCStatus,
+      Either GRPCStatus OMsg,
     serverStreaming ::
       PocMsg ->
       Streaming (Either PocMsg GRPCStatus),
-    clientStreaming :: Streaming PocMsg -> Either PocMsg GRPCStatus,
-    bidiStreaming :: Streaming PocMsg -> Streaming (Either PocMsg GRPCStatus)
+    clientStreaming :: Streaming PocMsg -> Either GRPCStatus PocMsg,
+    bidiStreaming :: Streaming PocMsg -> Streaming (Either GRPCStatus PocMsg)
   }
 
 data OMsg = OMsg
@@ -47,12 +47,14 @@ instance RsFFI RsOMsg OMsg where
     ys <-
       fromRsHashMap @RsString @RsString @(PBByteString PBString) @(PBByteString PBString)
         =<< get_OMsg_ys_ptr rs
-    drop_OMsg rs
     pure $ OMsg xs ys
 
   toRs (OMsg xs ys) = do
     (xsPtr, xsLen) <- toRsVec xs
     new_OMsg xsPtr xsLen =<< toRsHashMap ys
+
+instance RsDrop RsOMsg where
+  dropRs = drop_OMsg
 
 newtype PocMsg = PocMsg
   { xs :: PBByteString PBString

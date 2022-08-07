@@ -6,6 +6,7 @@ module PB.Common
     RsString,
     RsBytes,
     GRPCStatus (..),
+    RsDrop (..),
     RsFFI (..),
     RsHashMap,
     fromRsHashMap,
@@ -45,7 +46,10 @@ data GRPCStatus = GRPCStatus
     details :: BS.ByteString
   }
 
-class RsFFI rst hst where
+class RsDrop rst where
+  dropRs :: Ptr rst -> IO ()
+
+class RsDrop rst => RsFFI rst hst where
   fromRs :: Ptr rst -> IO hst
   toRs :: hst -> IO (Ptr rst)
 
@@ -71,6 +75,12 @@ foreign import ccall
 foreign import ccall
   rs_bytes_copy :: Ptr Word8 -> CInt -> IO (Ptr RsBytes)
 
+foreign import ccall
+  rs_string_drop :: Ptr RsString -> IO ()
+
+foreign import ccall
+  rs_bytes_drop :: Ptr RsBytes -> IO ()
+
 instance RsFFI RsString (PBByteString PBString) where
   fromRs rs = do
     ptr <- newForeignPtr_ =<< rs_string_get_ptr rs
@@ -81,6 +91,9 @@ instance RsFFI RsString (PBByteString PBString) where
     let BS ptr len = hs
     withForeignPtr ptr \ptr -> rs_string_copy ptr (fromIntegral len)
 
+instance RsDrop RsString where
+  dropRs = rs_string_drop
+
 instance RsFFI RsBytes (PBByteString PBBytes) where
   fromRs rs = do
     ptr <- newForeignPtr_ =<< rs_bytes_get_ptr rs
@@ -90,6 +103,9 @@ instance RsFFI RsBytes (PBByteString PBBytes) where
   toRs (PBByteString hs) = do
     let BS ptr len = hs
     withForeignPtr ptr \ptr -> rs_bytes_copy ptr (fromIntegral len)
+
+instance RsDrop RsBytes where
+  dropRs = rs_bytes_drop
 
 data RsHashMap rsk rsv
 
