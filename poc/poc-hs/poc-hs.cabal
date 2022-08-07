@@ -1,0 +1,35 @@
+cabal-version:      2.4
+name:               poc-hs
+version:            0.1.0.0
+author:             Alissa Tung
+maintainer:         alissa@mail.ncut.edu.cn
+extra-source-files:
+
+executable poc-hs
+  main-is:          Main.hs
+  build-depends:    base ^>=4.14.3.0
+  hs-source-dirs:   app
+  default-language: Haskell2010
+
+library
+  exposed-modules:
+    PB.Common
+    Poc.Gen.PB
+    Poc.Gen.PB.OMsg
+    Poc.Gen.Server
+
+  hs-source-dirs:     src
+  build-depends:
+    , base        ^>=4.14.3.0
+    , bytestring  >=0.11.3.1
+    , conduit     >=1.3.4.2
+    , containers  >=0.6.6
+
+  default-language:   Haskell2010
+  ghc-options:        -Werror=prepositive-qualified-module -Wall
+  default-extensions:
+    BlockArguments
+    DuplicateRecordFields
+    GADTs
+    ImportQualifiedPost
+    OverloadedStrings
