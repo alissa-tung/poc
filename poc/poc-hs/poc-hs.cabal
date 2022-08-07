@@ -18,6 +18,12 @@ library
     Poc.Gen.PB.OMsg
     Poc.Gen.Server
 
+  other-modules:
+    PB.Common.ByteString
+    PB.Common.Containers
+    PB.Common.Status
+    PB.Common.Types
+
   hs-source-dirs:     src
   build-depends:
     , base        ^>=4.14.3.0
@@ -26,7 +32,10 @@ library
     , containers  >=0.6.6
 
   default-language:   Haskell2010
-  ghc-options:        -Wall -Wno-name-shadowing
+  ghc-options:
+    -Wall -Wno-name-shadowing -Werror=prepositive-qualified-module
+    -Werror=unused-imports
+
   default-extensions:
     BlockArguments
     DuplicateRecordFields
@@ -36,6 +45,7 @@ library
     LambdaCase
     MultiParamTypeClasses
     OverloadedStrings
+    PatternSynonyms
     RankNTypes
     ScopedTypeVariables
     TypeApplications

@@ -10,9 +10,9 @@ data IMsg
 
 data RsIMsg
 
+instance RsDrop RsIMsg where
+  dropRs = undefined
+
 instance RsFFI RsIMsg IMsg where
   fromRs = undefined
   toRs = undefined
-
-instance RsDrop RsIMsg where
-  dropRs = undefined

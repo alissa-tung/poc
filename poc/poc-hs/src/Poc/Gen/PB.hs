@@ -18,12 +18,14 @@ data PocService = PocService
     bidiStreaming :: Streaming PocMsg -> Streaming (Either GRPCStatus PocMsg)
   }
 
-data OMsg = OMsg
-  { xs :: [OMsg.IMsg],
-    ys :: Map.Map (PBByteString PBString) (PBByteString PBString)
-  }
-
 data RsOMsg
+
+foreign import ccall
+  drop_OMsg :: Ptr RsOMsg -> IO ()
+
+foreign import ccall
+  new_OMsg ::
+    Ptr (Ptr OMsg.RsIMsg) -> CSize -> Ptr (RsHashMap RsString RsString) -> IO (Ptr RsOMsg)
 
 foreign import ccall
   get_OMsg_xs_ptr :: Ptr RsOMsg -> IO (Ptr (Ptr OMsg.RsIMsg))
@@ -34,12 +36,13 @@ foreign import ccall
 foreign import ccall
   get_OMsg_ys_ptr :: Ptr RsOMsg -> IO (Ptr (RsHashMap RsString RsString))
 
-foreign import ccall
-  drop_OMsg :: Ptr RsOMsg -> IO ()
+data OMsg = OMsg
+  { xs :: [OMsg.IMsg],
+    ys :: Map.Map (PBByteString PBString) (PBByteString PBString)
+  }
 
-foreign import ccall
-  new_OMsg ::
-    Ptr (Ptr OMsg.RsIMsg) -> CSize -> Ptr (RsHashMap RsString RsString) -> IO (Ptr RsOMsg)
+instance RsDrop RsOMsg where
+  dropRs = drop_OMsg
 
 instance RsFFI RsOMsg OMsg where
   fromRs rs = do
@@ -53,9 +56,29 @@ instance RsFFI RsOMsg OMsg where
     (xsPtr, xsLen) <- toRsVec xs
     new_OMsg xsPtr xsLen =<< toRsHashMap ys
 
-instance RsDrop RsOMsg where
-  dropRs = drop_OMsg
+data RsPocMsg
+
+foreign import ccall
+  drop_PocMsg :: Ptr RsPocMsg -> IO ()
+
+foreign import ccall
+  new_PocMsg :: Ptr RsString -> IO (Ptr RsPocMsg)
+
+foreign import ccall
+  get_PocMsg_xs :: Ptr RsPocMsg -> IO (Ptr RsString)
 
 newtype PocMsg = PocMsg
   { xs :: PBByteString PBString
   }
+
+instance RsDrop RsPocMsg where
+  dropRs = drop_PocMsg
+
+instance RsFFI RsPocMsg PocMsg where
+  fromRs rs = do
+    xs <- fromRs @RsString @(PBByteString PBString) =<< get_PocMsg_xs rs
+    pure $ PocMsg xs
+
+  toRs (PocMsg xs) = do
+    xs <- toRs @RsString @(PBByteString PBString) xs
+    new_PocMsg xs
