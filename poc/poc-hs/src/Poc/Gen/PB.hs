@@ -1,9 +1,7 @@
 module Poc.Gen.PB where
 
-import Control.Monad
 import Data.Map.Strict qualified as Map
 import Foreign
-import Foreign.C.Types
 import PB.Common
 import Poc.Gen.PB.OMsg qualified as OMsg
 
@@ -25,13 +23,10 @@ foreign import ccall
 
 foreign import ccall
   new_OMsg ::
-    Ptr (Ptr OMsg.RsIMsg) -> CSize -> Ptr (RsHashMap RsString RsString) -> IO (Ptr RsOMsg)
+    Ptr (RsVec OMsg.RsIMsg) -> Ptr (RsHashMap RsString RsString) -> IO (Ptr RsOMsg)
 
 foreign import ccall
-  get_OMsg_xs_ptr :: Ptr RsOMsg -> IO (Ptr (Ptr OMsg.RsIMsg))
-
-foreign import ccall
-  get_OMsg_xs_len :: Ptr RsOMsg -> IO CSize
+  get_OMsg_xs :: Ptr RsOMsg -> IO (Ptr (RsVec OMsg.RsIMsg))
 
 foreign import ccall
   get_OMsg_ys_ptr :: Ptr RsOMsg -> IO (Ptr (RsHashMap RsString RsString))
@@ -46,15 +41,16 @@ instance RsDrop RsOMsg where
 
 instance RsFFI RsOMsg OMsg where
   fromRs rs = do
-    xs <- join $ fromRsVec <$> get_OMsg_xs_ptr rs <*> (fromIntegral <$> get_OMsg_xs_len rs)
+    xs <- fromRs @(RsVec OMsg.RsIMsg) @[OMsg.IMsg] =<< get_OMsg_xs rs
     ys <-
       fromRsHashMap @RsString @RsString @(PBByteString PBString) @(PBByteString PBString)
         =<< get_OMsg_ys_ptr rs
     pure $ OMsg xs ys
 
   toRs (OMsg xs ys) = do
-    (xsPtr, xsLen) <- toRsVec xs
-    new_OMsg xsPtr xsLen =<< toRsHashMap ys
+    xs <- toRs @(RsVec OMsg.RsIMsg) @[OMsg.IMsg] xs
+    ys <- toRsHashMap @RsString @RsString @(PBByteString PBString) @(PBByteString PBString) ys
+    new_OMsg xs ys
 
 data RsPocMsg
 
